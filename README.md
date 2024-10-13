@@ -1,8 +1,9 @@
 # Distributionally Robust Graph Out-of-Distribution Recommendation via Diffusion Model
 
 - Model framework
-
-This paper designs a Distributionally Robust Graph model for \textbf{O}OD recommendation (DRGO). Specifically, our method first employs a simple and effective diffusion paradigm to alleivate the noisy effect in the latent space. Additionally, an entropy regularization term is introduced in the DRO objective function to avoid extreme sample weights in the worst-case distribution. At last, we provide a theoretical proof of the generalization error bound of DRGO as well as a theoretical analysis of how our approach mitigates noisy sample effects, which helps to better understand the proposed framework
+ 
+![png](https://github.com/user683/DRGO/blob/master/DRGO_Structure.png)
+This paper designs a Distributionally Robust Graph model for OOD recommendation (DRGO). Specifically, our method first employs a simple and effective diffusion paradigm to alleivate the noisy effect in the latent space. Additionally, an entropy regularization term is introduced in the DRO objective function to avoid extreme sample weights in the worst-case distribution. At last, we provide a theoretical proof of the generalization error bound of DRGO as well as a theoretical analysis of how our approach mitigates noisy sample effects, which helps to better understand the proposed framework
 from a theoretical perspective.
 
 ## Requirements
