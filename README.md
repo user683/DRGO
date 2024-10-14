@@ -25,7 +25,6 @@ from a theoretical perspective.
 ├── modules
 │   ├── diffusion_model.py
 │   ├── KMeans_fun.py
-│   ├── light.py
 │   ├── LightGCN.py
 │   ├── MLP_model.py
 │   ├── SDE.py
