@@ -31,7 +31,6 @@ class Coach:
 
         generate_interaction_group_dict(self.train_interaction_matrix, args.k)
 
-        print("初始化模型")
         print(self.num_users)
         print(self.num_items)
 
@@ -45,7 +44,6 @@ class Coach:
             device)
         self.LightGCN_model = LGCN_Encoder(self.num_users, 2).to(device)
 
-        print("初始化模型优化器")
         self.VGAE_optimizer = torch.optim.Adam([{'params': self.VGAE_model.parameters(), 'weight_decay': 0}],
                                                lr=args.lr)
         self.LightGCN_optimizer = torch.optim.Adam([{'params': self.LightGCN_model.parameters(), 'weight_decay': 0}],
@@ -53,7 +51,6 @@ class Coach:
 
         self.MLP_optimizer = torch.optim.Adam([{'params': self.MLP_model.parameters(), 'weight_decay': 0}], lr=args.lr)
 
-        print("优化器初始化完成")
 
         self.batch_dataset = DRO_dataloader(self.train_interaction_matrix, self.num_users, self.num_items)
         self.dataloader = DataLoader(self.batch_dataset, batch_size=args.batch_size, shuffle=True)
