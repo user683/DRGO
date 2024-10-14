@@ -147,7 +147,7 @@ def get_user_item_matrix(graph):
     row_np = np.array(row)
     col_np = np.array(col)
 
-    temp_interaction_mat = sp.csr_matrix((entries, (row_np, col_np+num_user)),
+    temp_interaction_mat = sp.csr_matrix((entries, (row_np, col_np + num_user)),
                                          shape=(num_user + num_item, num_user + num_item),
                                          dtype=np.float32)
 
@@ -187,7 +187,7 @@ def get_train_user_item_matrix(graph):
     col_np = np.array(col)
 
     interaction_mat = sp.csr_matrix((entries, (row_np, col_np)),
-                                    shape=(num_user , num_item),
+                                    shape=(num_user, num_item),
                                     dtype=np.float32)
 
     return interaction_mat  # 返回稀疏矩阵和交互列表
@@ -227,33 +227,7 @@ def ideal_distribution_cal(embeddings, dataset):
     return ideal_distribution
 
 
-# def ideal_distribution_cal(dataset):
-#     # 加载中介中心性数据
-#     centrality = np.load('../dataset/yelp2018/centrality_dict_softmax.npy', allow_pickle=True)
-#
-#     print(centrality)
-#
-#     centrality = centrality.item()
-#     # 计算前 10% 的节点数量
-#     num_top_nodes = int(len(centrality) * 0.1)
-#
-#     # 获取前 10% 节点，按中心性值排序
-#     top_nodes = sorted(centrality, key=centrality.get, reverse=True)[:num_top_nodes]
-#
-#     # 提取这些节点对应的嵌入
-#     # ideal_distribution = embeddings[top_nodes]
-#
-#     return 0
-#
-#
-# if __name__ == '__main__':
-#     ideal_distribution_cal('yelp2018')
-
-
 def generate_interaction_matrix_from_dgl(graph, user_num, item_num):
-    # src_nodes, dst_nodes = graph.edges()
-    # src_nodes = src_nodes.cpu().numpy()
-    # dst_nodes = dst_nodes.cpu().numpy()
     src, dst = graph.edges()
     src_nodes = src.cpu().numpy()
     dst = dst.cpu().numpy()
