@@ -18,14 +18,14 @@ def load_datasets(data_name):
             "test": "./dataset/douban/douban_test_data.bin",
         },
         "kuairec": {
-            "train": "./dataset/kuairec/kuairec_train_data.bin",
-            "test": "./dataset/kuairec/kuairec_test_data.bin",
+            "train": "./dataset/kuairrec/kuairrec_train_data.bin",
+            "test": "./dataset/kuairrec/kuairrec_test_data.bin",
         },
         "food": {
             "train": "./dataset/food/food_train_data.bin",
             "test": "./dataset/food/food_test_data.bin",
         },
-        # Please add your own dataset path in there, and you need first add you dataset into ./dataset.
+        # Please add your own dataset path in there, and you need first add your dataset into ./dataset.
     }
 
     if data_name not in dataset_paths:
@@ -44,23 +44,23 @@ def prepare_data(graph, device):
 
 
 def prepare_loss_parameters(graph, device):
-    # 获取图中的所有边
+    # Get all the edges in the graph
     src, dst = graph.edges()
     edges_all = torch.stack([src, dst], dim=0)
     edges_all = edges_all.t().cpu().numpy()
 
-    # 随机打乱边的顺序
+    # Randomly shuffle the order of edges
     all_edge_idx = list(range(edges_all.shape[0]))
     np.random.shuffle(all_edge_idx)
 
-    # 使用所有边作为训练边
+    # Use all edges as training edges
     train_edge_idx = all_edge_idx[:]
 
-    # 创建包含选定边的子图，并获取其邻接矩阵
+    # Create a subgraph containing the selected edges and get its adjacency matrix
     train_graph = dgl.edge_subgraph(graph, train_edge_idx, relabel_nodes=False).to(device)
     adj = train_graph.adjacency_matrix().to_dense().to(device)
 
-    # 计算正负样本的权重和归一化系数
+    # Calculate weights and normalization coefficient for positive and negative samples
     pos_weight = ((adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum())
     norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)
     weight_mask = adj.view(-1) == 1
@@ -73,8 +73,8 @@ def prepare_loss_parameters(graph, device):
 class DRO_dataloader(Dataset):
     def __init__(self, train_interaction_matrix, num_user, num_item):
         """
-        初始化数据集
-        :param interaction_matrix: scipy.sparse.csr_matrix，用户-物品交互矩阵
+        Initialize the dataset
+        :param interaction_matrix: scipy.sparse.csr_matrix, user-item interaction matrix
         """
         self.interaction_matrix = train_interaction_matrix
         self.num_users, self.num_items = num_user, num_item
@@ -84,34 +84,24 @@ class DRO_dataloader(Dataset):
         self.pair_stage = np.load("./dataset/{0}/interaction_group_dict.npy".format(args.dataset),
                                   allow_pickle=True).item()
 
-        # 预处理数据，生成正负样本
-        # for user_id in range(self.num_users):
-        #     # 使用稀疏矩阵格式获取正样本索引
-        #     pos_items = interaction_matrix[user_id].indices
-        #     remaining_items = list(set(range(self.num_items)) - set(pos_items))
-        #     if not remaining_items:
-        #         continue  # 如果没有剩余的物品可供选择，则跳过
-        #     neg_items = np.random.choice(remaining_items, size=len(pos_items), replace=False)
-        #     self.user_indices.extend([user_id] * len(pos_items))
-        #     self.pos_item_indices.extend(pos_items)
-        #     self.neg_item_indices.extend(neg_items)
+        # Preprocess data to generate positive and negative samples
         for user_id in range(self.num_users):
-            # 使用稀疏矩阵格式获取正样本索引
+            # Use sparse matrix format to get positive sample indices
             pos_items = self.interaction_matrix[user_id].indices
 
-            # 确保所有物品 ID 在 0 到 num_item-1 范围内
+            # Ensure all item IDs are within the range of 0 to num_item-1
             all_items = set(range(self.num_items))
 
-            # 获取负样本候选集
+            # Get negative sample candidates
             remaining_items = list(all_items - set(pos_items))
 
             if not remaining_items:
-                continue  # 如果没有剩余的物品可供选择，则跳过
+                continue  # Skip if no remaining items are available
 
-            # 随机选择负样本，确保其范围在有效物品 ID 范围内
+            # Randomly select negative samples, ensuring they are within valid item ID range
             neg_items = np.random.choice(remaining_items, size=len(pos_items), replace=False)
 
-            # 更新用户、正样本和负样本的索引列表
+            # Update index lists for users, positive samples, and negative samples
             self.user_indices.extend([user_id] * len(pos_items))
             self.pos_item_indices.extend(pos_items)
             self.neg_item_indices.extend(neg_items)
@@ -136,8 +126,8 @@ def get_user_item_matrix(graph):
 
     num_user = len(set(edge_index[0].tolist()))
     num_item = len(set(edge_index[1].tolist()))
-    print("the number of users: {0}".format(num_user))
-    print("the number of items: {0}".format(num_item))
+    print("The number of users: {0}".format(num_user))
+    print("The number of items: {0}".format(num_item))
 
     row, col, entries = [], [], []
     for edge in edge_index.t().tolist():
@@ -150,10 +140,6 @@ def get_user_item_matrix(graph):
     temp_interaction_mat = sp.csr_matrix((entries, (row_np, col_np + num_user)),
                                          shape=(num_user + num_item, num_user + num_item),
                                          dtype=np.float32)
-
-    # save_sparse_matrix_to_pickle(interaction_mat, 'interaction_matrix.pkl')
-    # print("最大用户编号{0}".format(max_user))
-    # print("最大物品编号{0}".format(find_max_number(col)))
 
     interaction_mat = temp_interaction_mat + temp_interaction_mat.T
 
@@ -170,18 +156,17 @@ def get_train_user_item_matrix(graph):
     num_item = len(set(edge_index[1].tolist()))
 
     row, col, entries = [], [], []
-    interaction_list = []  # 新增一个列表来保存交互信息
+    interaction_list = []  # Add a list to store interaction information
 
     for edge in edge_index.t().tolist():
         user_id = edge[0]
         item_id = edge[1] - max_user - 1
-        rating = 1.0  # 假设所有交互的评分为 1.0，可以根据实际情况调整
+        rating = 1.0  # Assume the rating for all interactions is 1.0, can be adjusted based on actual situation
         row.append(user_id)
         col.append(item_id)
         entries.append(rating)
 
-        # 保存交互信息为 [user_id, item_id, rating] 的格式
-        # interaction_list.append([user_id, item_id, rating])
+        # Save interaction information in the format [user_id, item_id, rating]
 
     row_np = np.array(row)
     col_np = np.array(col)
@@ -190,7 +175,7 @@ def get_train_user_item_matrix(graph):
                                     shape=(num_user, num_item),
                                     dtype=np.float32)
 
-    return interaction_mat  # 返回稀疏矩阵和交互列表
+    return interaction_mat  # Return sparse matrix and interaction list
 
 
 def normalize_graph_mat(adj_mat):
@@ -211,17 +196,17 @@ def normalize_graph_mat(adj_mat):
 
 
 def ideal_distribution_cal(embeddings, dataset):
-    # 加载中介中心性数据
+    # Load centrality data
     centrality = np.load('./dataset/{0}/centrality_dict_softmax.npy'.format(args.dataset), allow_pickle=True)
 
     centrality = centrality.item()
-    # 计算前 10% 的节点数量
+    # Calculate the number of top 10% nodes
     num_top_nodes = int(len(centrality) * 0.05)
 
-    # 获取前 10% 节点，按中心性值排序
+    # Get top 10% nodes, sorted by centrality value
     top_nodes = sorted(centrality, key=centrality.get, reverse=True)[:num_top_nodes]
 
-    # 提取这些节点对应的嵌入
+    # Extract embeddings corresponding to these nodes
     ideal_distribution = embeddings[top_nodes]
 
     return ideal_distribution

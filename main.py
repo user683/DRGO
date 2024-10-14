@@ -19,22 +19,18 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Coach:
     def __init__(self, dataloader):
-        # 初始化数据和模型
         self.LightGCN_optimizer = None
         self.LightGCN_model = None
         self.train_graph_data = dataloader['train']
         self.test_graph_data = dataloader['test']
         self.node_features, self.edge_index, self.num_nodes = prepare_data(self.train_graph_data, device)
 
-        # 准备交互矩阵
         self.train_interaction_matrix = get_train_user_item_matrix(self.train_graph_data)
         self.interaction_matrix, self.num_users, self.num_items = get_user_item_matrix(self.train_graph_data)
         self.normalized_adj_matrix = normalize_graph_mat(self.interaction_matrix)
 
-        # 聚类
         generate_interaction_group_dict(self.train_interaction_matrix, args.k)
 
-        # 初始化模型
         print("初始化模型")
         print(self.num_users)
         print(self.num_items)
@@ -49,7 +45,6 @@ class Coach:
             device)
         self.LightGCN_model = LGCN_Encoder(self.num_users, 2).to(device)
 
-        # 初始化优化器
         print("初始化模型优化器")
         self.VGAE_optimizer = torch.optim.Adam([{'params': self.VGAE_model.parameters(), 'weight_decay': 0}],
                                                lr=args.lr)
@@ -75,35 +70,27 @@ class Coach:
         adj_matrix = train_graph.adjacency_matrix().to_dense().to(device)
         weight_tensor, normalization = compute_loss_para(adj_matrix, device)
 
-        # 配置日志格式
         log_format = '%(asctime)s %(message)s'
         logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_format, datefmt='%m/%d %I:%M:%S %p')
 
-        # 日志保存路径
         log_save = './logs/'
 
-        # 获取当前时间并格式化为 "月_日_具体时间"
         current_time = datetime.now().strftime("%m_%d_%H_%M_%S")
         log_file = args.save_name
         fname = f'{log_file}_{current_time}.txt'
 
-        # 确保目录存在
         log_dir = os.path.join(log_save, args.dataset)
-        os.makedirs(log_dir, exist_ok=True)  # 创建目录，如果目录已经存在则不做任何操作
+        os.makedirs(log_dir, exist_ok=True)
 
-        # 设置日志文件路径
         log_file_path = os.path.join(log_dir, fname)
 
-        # 创建文件处理器并添加到 logger
         fh = logging.FileHandler(log_file_path)
         fh.setFormatter(logging.Formatter(log_format))
         self.logger = logging.getLogger()
         self.logger.addHandler(fh)
 
-        # 设置记录日志时使用本地时间
         logging.Formatter.converter = time.localtime
 
-        # 记录日志信息
         self.logger.info(args)
         self.logger.info('================')
 
@@ -111,7 +98,7 @@ class Coach:
             average_loss = 0
             count = 0
 
-            # 生成embedding
+            # generating embedding
             batch_latent = self.VGAE_model.encoder(self.node_features, self.edge_index)
             diffusion_terms = self.Diffusion_model.caculate_losses(self.MLP_model, batch_latent, args.reweight)
             logits = self.VGAE_model.decoder(diffusion_terms["pred_xstart"])

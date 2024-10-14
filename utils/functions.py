@@ -14,56 +14,13 @@ def sinkhorn_distance(group_embedding, ideal_distribution):
     return loss(group_embedding, ideal_distribution)
 
 
-def group_users_by_kmeans(user_embeddings, interaction_df, n_clusters=5, random_state=0):
-    # 训练 KMeans 模型
-    user_embeddings = user_embeddings.detach().cpu().numpy()
-    kmeans = KMeans(n_clusters=n_clusters, random_state=random_state).fit(user_embeddings)
-
-    # 获取每个用户的聚类标签
-    user_clusters = kmeans.labels_
-
-    # 将稀疏矩阵转换为 COO 格式（坐标格式）
-    interaction_coo = interaction_df.tocoo()
-
-    # 创建 DataFrame，包含 user_id, item_id 和对应的值
-    interaction_df = pd.DataFrame({
-        'user_id': interaction_coo.row,  # 行索引对应 user_id
-        'item_id': interaction_coo.col,  # 列索引对应 item_id
-        'interaction_value': interaction_coo.data  # 矩阵中的值
-    })
-
-    # 只保留 user_id 和 item_id 两列
-    interaction_df = interaction_df[['user_id', 'item_id']]
-
-    # 将用户ID与对应的分组标签（Cluster ID）关联
-    user_group_mapping = pd.DataFrame({
-        'user_id': interaction_df['user_id'].unique(),
-        'cluster_id': user_clusters
-    })
-
-    # 将分组信息映射到用户-物品交互数据
-    interaction_df = pd.merge(interaction_df, user_group_mapping, on='user_id')
-
-    # 将用户-物品交互数据格式化为 {(user_id, item_id): user_group_id} 的形式
-    interaction_group_dict = {
-        (row['user_id'], row['item_id']): row['cluster_id']
-        for _, row in interaction_df.iterrows()
-    }
-    # 返回字典 将字典保存
-    np.save('./dataset/{0}/interaction_group_dict.npy'.format(args.dataset), interaction_group_dict,
-            allow_pickle=True)
-
-    print("聚类完成")
-    return interaction_group_dict
-
-
 def get_origin_user_interaction_list(graph, user_num):
     user_interactions = {}
 
     edges = graph.edges()
     src_nodes, dst_nodes = edges
 
-    user_set = set(src_nodes.numpy()) # 7724? 7732
+    user_set = set(src_nodes.numpy())  # 7724? 7732
 
     for user_id in user_set:
         interaction_indices = (src_nodes == user_id).nonzero(as_tuple=True)[0]
