@@ -91,11 +91,17 @@ class Coach:
         self.logger.info(args)
         self.logger.info('================')
 
+        # Initialize the KL divergence weight and starting temperature
+        initial_kl_weight = 1.0  # Initial KL weight
+        final_kl_weight = 0.01  # Final KL weight
+        temperature = 0.02  # Temperature parameter
+        cooling_rate = 0.001  # Cooling rate
+
         for epoch in range(args.epoch):
             average_loss = 0
             count = 0
 
-            # generating embedding
+            # Generate embeddings
             batch_latent = self.VGAE_model.encoder(self.node_features, self.edge_index)
             diffusion_terms = self.Diffusion_model.caculate_losses(self.MLP_model, batch_latent, args.reweight)
             logits = self.VGAE_model.decoder(diffusion_terms["pred_xstart"])
@@ -103,7 +109,28 @@ class Coach:
 
             vgae_loss = compute_vgae_loss(logits, adj_matrix, normalization, self.VGAE_model, weight_tensor)
 
-            total_pretrain_loss = elbo_loss + vgae_loss
+            # Dynamically adjust the KL divergence weight
+            kl_weight = initial_kl_weight * (final_kl_weight / initial_kl_weight) ** (epoch / args.epoch)
+
+            # Calculate the total loss with weighting
+            total_pretrain_loss = elbo_loss + kl_weight * vgae_loss
+
+            # Update the temperature after each epoch
+            temperature *= cooling_rate  # Temperature for the next update
+
+            # for epoch in range(args.epoch):
+        #     average_loss = 0
+        #     count = 0
+        #
+        #     # generating embedding
+        #     batch_latent = self.VGAE_model.encoder(self.node_features, self.edge_index)
+        #     diffusion_terms = self.Diffusion_model.caculate_losses(self.MLP_model, batch_latent, args.reweight)
+        #     logits = self.VGAE_model.decoder(diffusion_terms["pred_xstart"])
+        #     elbo_loss = diffusion_terms["loss"].mean()
+        #
+        #     vgae_loss = compute_vgae_loss(logits, adj_matrix, normalization, self.VGAE_model, weight_tensor)
+        #
+        #     total_pretrain_loss = elbo_loss + vgae_loss
             torch.cuda.empty_cache()
             self.VGAE_optimizer.zero_grad()
             self.MLP_optimizer.zero_grad()
