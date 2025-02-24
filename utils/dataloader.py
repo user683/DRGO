@@ -18,8 +18,8 @@ def load_datasets(data_name):
             "test": "./dataset/douban/douban_test_data.bin",
         },
         "kuairec": {
-            "train": "./dataset/kuairrec/kuairrec_train_data.bin",
-            "test": "./dataset/kuairrec/kuairrec_test_data.bin",
+            "train": "./dataset/kuairec/kuairec_train_data.bin",
+            "test": "./dataset/kuairec/kuairec_test_data.bin",
         },
         "food": {
             "train": "./dataset/food/food_train_data.bin",
