@@ -4,8 +4,8 @@ parser = argparse.ArgumentParser(description="Go S_DRO")
 
 parser.add_argument('--lr', type=float, default=0.001, help='Initial learning rate.')
 parser.add_argument('--batch_size', type=int, default=4096, help="the batch size for bpr loss training procedure")
-parser.add_argument('--dataset', type=str, default='food', help="[yelp2018,douban, kuairec]")
-parser.add_argument('--epoch', type=int, default=30, help="the number of training epochs")
+parser.add_argument('--dataset', type=str, default='kuairec', help="[yelp2018, douban, kuairec]")
+parser.add_argument('--epoch', type=int, default=5, help="the number of training epochs")
 parser.add_argument('--decay', type=float, default=1e-3)
 parser.add_argument('--n_hid', type=int, default=64)
 
