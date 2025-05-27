@@ -5,7 +5,7 @@
 2025-05-27 21:13:40,386 epoch 3 tested, Recall@20: 0.19701, NDCG@20: 0.63688
 2025-05-27 21:13:59,256 epoch 4 tested, Recall@20: 0.19701, NDCG@20: 0.63687
 2025-05-27 21:14:18,339 epoch 5 tested, Recall@20: 0.19701, NDCG@20: 0.63687
-2025-05-27 21:14:18,567 The best result of SDRO:
+2025-05-27 21:14:18,567 The best result of DGRO:
 Top 10
 Hit Ratio:0.04374
 Precision:0.6701
