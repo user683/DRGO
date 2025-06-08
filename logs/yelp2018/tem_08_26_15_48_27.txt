@@ -1,0 +1,39 @@
+2024-08-26 15:48:27,388 Namespace(lr=0.001, batch_size=4096, dataset='yelp2018', epoch=25, decay=0.001, n_hid=64, time_type='cat', dims=64, norm=True, emb_size=16, steps=20, noise_schedule='linear-var', noise_scale=0.1, noise_min=0.0001, noise_max=0.02, sampling_noise=False, sampling_steps=0, reweight=True, p=1, k=5, sinkhorn_weight=1, step_size=0.001, save_name='tem')
+2024-08-26 15:48:27,388 ================
+2024-08-26 15:48:52,003 epoch 1 tested, Recall@20: 0.01427, NDCG@20: 0.00610
+2024-08-26 15:49:18,921 epoch 2 tested, Recall@20: 0.01427, NDCG@20: 0.00610
+2024-08-26 15:49:45,136 epoch 3 tested, Recall@20: 0.01427, NDCG@20: 0.00610
+2024-08-26 15:50:11,026 epoch 4 tested, Recall@20: 0.01497, NDCG@20: 0.00627
+2024-08-26 15:50:37,533 epoch 5 tested, Recall@20: 0.01497, NDCG@20: 0.00627
+2024-08-26 15:51:03,280 epoch 6 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:51:29,454 epoch 7 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:51:56,106 epoch 8 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:52:23,714 epoch 9 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:52:50,039 epoch 10 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:53:17,388 epoch 11 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:53:43,192 epoch 12 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:54:09,964 epoch 13 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:54:36,443 epoch 14 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:55:02,343 epoch 15 tested, Recall@20: 0.01573, NDCG@20: 0.00650
+2024-08-26 15:55:28,508 epoch 16 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:55:54,188 epoch 17 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:56:20,474 epoch 18 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:56:46,186 epoch 19 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:57:12,266 epoch 20 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:57:39,571 epoch 21 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:58:05,918 epoch 22 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:58:32,864 epoch 23 tested, Recall@20: 0.01629, NDCG@20: 0.00666
+2024-08-26 15:58:58,971 epoch 24 tested, Recall@20: 0.01676, NDCG@20: 0.00684
+2024-08-26 15:59:24,866 epoch 25 tested, Recall@20: 0.01676, NDCG@20: 0.00684
+2024-08-26 15:59:26,311 The best result of SDRO:
+Top 10
+Hit Ratio:0.006
+Precision:0.00158
+Recall:0.00862
+NDCG:0.00453
+Top 20
+Hit Ratio:0.01138
+Precision:0.0015
+Recall:0.01676
+NDCG:0.00684
+

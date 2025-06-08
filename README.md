@@ -52,6 +52,11 @@ python main.py --dataset Food --lr 0.001 --batch_size 4096 --epoch 20 --dims 64
 python main.py --dataset kuairec --lr 0.0001 --batch_size 4096 --epoch 5 --dims 64
 ```
 
+- Yelp2018
+```
+python main.py --dataset yelp2018 --lr 0.0001 --batch_size 4096 --epoch 25 --dims 64
+```
+
 ## Dataset
 
 |  Dataset   |  #Users  |  #Items  |  #Interactions  |   Density   |
